@@ -23,6 +23,8 @@ namespace Files_proj
         {
             InitializeComponent();
             Query_Input.Enabled = false;
+            Excute.Enabled = false;
+
             openFileDialog1.Filter = "XML Files|*.xml";
             openFileDialog1.Title = "Select a XML File";
         }
@@ -36,8 +38,9 @@ namespace Files_proj
                 {
                     
                     Query_Input.Enabled = true;
-                    
-                   
+                    Excute.Enabled = true;
+
+
                 }
             }
 
@@ -77,10 +80,6 @@ namespace Files_proj
             ResultGredView.Rows.Remove(ResultGredView.Rows[0]);
 
         }
-        void Where()
-        {
-
-        }
 
         private void Query_Input_KeyDown(object sender, KeyEventArgs e)
         {
@@ -93,6 +92,13 @@ namespace Files_proj
                
             }
             
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            query.OnCreate(Query_Input.Text);
+            op = new OP(openFileDialog1.FileName, query);
+            fillDataGridView();
         }
     }
 }
