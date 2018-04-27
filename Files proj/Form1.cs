@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -45,19 +46,25 @@ namespace Files_proj
         }
         void fillDataGridView()
         {
-            List<Tuple<string, List<double>>> results = op.select();
-
-            string[] values = new string[results.Count];
-            ResultGredView.ColumnCount = results.Count;
-            int i = 0;
-            foreach (Tuple<string, List<double>> col in results)
+            if(query.isFunction)
             {
-                ResultGredView.Columns[i].Name = col.Item1;
-                values[i] = col.Item2[0].ToString();
-                i++;
-            }
+                List<List<string>> results = op.select();
 
-            ResultGredView.Rows.Add(values);
+                ResultGredView.ColumnCount = results.Count;
+                ResultGredView.RowCount = results[0].Count;
+
+                for(int i=0;i< results.Count;i++)
+                {
+                    for(int j=0;j< results[i].Count;j++)
+                    {
+                        ResultGredView.Rows[j].Cells[i].Value = results[i][j];
+                    }
+                }
+            }
+            else
+            {
+                
+            }
         }
         void Where()
         {

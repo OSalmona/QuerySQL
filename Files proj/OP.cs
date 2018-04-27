@@ -130,14 +130,13 @@ namespace Files_proj
             return rows;
 
         }
-        public List<Tuple<string, List<double>>> select()
+        public List<List<string>> select()
         {
-            List<Tuple<string, List<double>>> l=new List<Tuple<string, List<double>>>();
+            List<List<string>> l =new List<List<string>>();
             if(query.isFunction)
             {
                 string colName,operation;
-                List<double> tmp=new List<double>();
-                Tuple<string, List<double>> t;
+                double tmp=0;
                 
                 foreach (Match m in query.match)
                 {
@@ -145,27 +144,40 @@ namespace Files_proj
                     operation = m.Groups[1].ToString();
                     if (operation == "max")
                     {
-                        tmp = new List<double>() { max(colName) };
+                        tmp =  max(colName) ;
                     }
                     else if (operation == "min")
                     {
-                        tmp = new List<double>() { min(colName) };
+                        tmp =  min(colName) ;
                     }
                     else if (operation == "avg")
                     {
-                        tmp = new List<double>() { Avarage(colName) };
+                        tmp =  Avarage(colName) ;
                     }
                     else if (operation == "count")
                     {
-                        tmp = new List<double>() { count(colName) };
+                        tmp =  count(colName) ;
                     }
                     else if (operation == "sum")
                     {
-                        tmp = new List<double>() { Sum(colName) };
+                        tmp =  Sum(colName) ;
                     }
+                    l.Add(new List<string>() { colName, tmp.ToString() });
+                }
+            }
+            else
+            {
+                List<string> colNames = new List<string>();
+                if (query.match[0].Groups[0].ToString() == "*")
+                {
 
-                    t = new Tuple<string, List<double>>(colName, tmp);
-                    l.Add(t);
+                }
+                else
+                {
+                    foreach (Match i in query.match)
+                    {
+                      //  colNames.Add(i.)
+                    }
                 }
             }
             return l;
