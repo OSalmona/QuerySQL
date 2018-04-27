@@ -42,6 +42,7 @@
             this.Query_Input.Name = "Query_Input";
             this.Query_Input.Size = new System.Drawing.Size(443, 20);
             this.Query_Input.TabIndex = 0;
+            this.Query_Input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Query_Input_KeyDown);
             // 
             // label1
             // 
@@ -57,10 +58,11 @@
             this.ResultGredView.AllowUserToAddRows = false;
             this.ResultGredView.AllowUserToDeleteRows = false;
             this.ResultGredView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.ResultGredView.Location = new System.Drawing.Point(12, 96);
+            this.ResultGredView.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.ResultGredView.Location = new System.Drawing.Point(0, 108);
             this.ResultGredView.Name = "ResultGredView";
             this.ResultGredView.ReadOnly = true;
-            this.ResultGredView.Size = new System.Drawing.Size(446, 236);
+            this.ResultGredView.Size = new System.Drawing.Size(470, 236);
             this.ResultGredView.TabIndex = 2;
             // 
             // Excute_Btn

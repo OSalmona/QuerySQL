@@ -17,39 +17,65 @@ namespace Files_proj
         Query query = new Query();
         OP op;
 
+
         public Form1()
         {
             InitializeComponent();
+            Query_Input.Enabled = false;
+            openFileDialog1.Filter = "XML Files|*.xml";
+            openFileDialog1.Title = "Select a XML File";
         }
 
 
         private void Excute_Btn_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "XML Files|*.xml";
-            openFileDialog1.Title = "Select a XML File";
-
-            // Show the Dialog.  
-            // If the user clicked OK in the dialog and  
-            // a .CUR file was selected, open it.  
-            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+           if(openFileDialog1.FileName!=null)//regex assurance of the writting query
             {
-                // Assign the cursor in the Stream to the Form's Cursor property.  
+                if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    
+                    Query_Input.Enabled = true;
+                    
+                   
+                }
             }
 
-            query.OnCreate(Query_Input.Text);
-            op=new OP(openFileDialog1.FileName,query.intialQuery[1]);
-
-            Query_Input.Text = op.Sum(query.match[0].Groups[0].ToString()).ToString();
-          
+           
 
         }
+        void fillDataGridView()
+        {
+            List<Tuple<string, List<double>>> results = op.select();
 
+            string[] values = new string[results.Count];
+            ResultGredView.ColumnCount = results.Count;
+            int i = 0;
+            foreach (Tuple<string, List<double>> col in results)
+            {
+                ResultGredView.Columns[i].Name = col.Item1;
+                values[i] = col.Item2[0].ToString();
+                i++;
+            }
+
+            ResultGredView.Rows.Add(values);
+        }
         void Where()
         {
 
         }
-        
+
+        private void Query_Input_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+
+                query.OnCreate(Query_Input.Text);
+                op = new OP(openFileDialog1.FileName, query);
+                fillDataGridView();
+               
+            }
+            
+        }
     }
 }
 /* all except in will take the colum name 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -12,10 +13,13 @@ namespace Files_proj
         XmlNodeList list;
         XmlDocument doc;
         string table;
-        public OP(string fileName,string table)
+        Query query;
+        public OP(string fileName,Query query)
         {
-            this.table = table;
+            this.query = query;
+            this.table = query.intialQuery[1];
             getFile(fileName);
+
         }
 
         void getFile(string fileName)
@@ -113,6 +117,59 @@ namespace Files_proj
                 }
             }
             return resulat;
-        }        
+        }
+        List<int> selectedRows()
+        {
+            List<int> rows=new List<int>();
+            Stack<string> s = new Stack<string>();
+            foreach(string i in query.postFixString)
+            {
+
+            }
+
+            return rows;
+
+        }
+        public List<Tuple<string, List<double>>> select()
+        {
+            List<Tuple<string, List<double>>> l=new List<Tuple<string, List<double>>>();
+            if(query.isFunction)
+            {
+                string colName,operation;
+                List<double> tmp=new List<double>();
+                Tuple<string, List<double>> t;
+                
+                foreach (Match m in query.match)
+                {
+                    colName = m.Groups[2].ToString();
+                    operation = m.Groups[1].ToString();
+                    if (operation == "max")
+                    {
+                        tmp = new List<double>() { max(colName) };
+                    }
+                    else if (operation == "min")
+                    {
+                        tmp = new List<double>() { min(colName) };
+                    }
+                    else if (operation == "avg")
+                    {
+                        tmp = new List<double>() { Avarage(colName) };
+                    }
+                    else if (operation == "count")
+                    {
+                        tmp = new List<double>() { count(colName) };
+                    }
+                    else if (operation == "sum")
+                    {
+                        tmp = new List<double>() { Sum(colName) };
+                    }
+
+                    t = new Tuple<string, List<double>>(colName, tmp);
+                    l.Add(t);
+                }
+            }
+            return l;
+        }
+
     }
 }

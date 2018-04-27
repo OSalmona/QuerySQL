@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- New XML document created with EditiX XML Editor (http://www.editix.com) at Mon Apr 16 14:03:08 EET 2018 -->
+
+<dataBase name="testDB">
+    <table name="numbers">
+	<col name="binary">
+		<row>0111</row>
+		<row>0010</row>
+		<row>0011</row>
+        <row>1100</row>
+		<row>0001</row>
+		<row>1000</row>
+	</col>
+	<col name="uniary">
+		<row>5</row>
+		<row>2</row>
+		<row>9</row>
+		<row>1</row>
+		<row>7</row>
+		<row>8</row>
+	</col>
+</table>
+
+<table name="info">
+	<col name="pre">
+		<row>lutti</row>
+		<row>tolokuso</row>
+		<row>na'chaa</row>
+	</col>
+	<col name="post">
+		<row>one</row>
+		<row>three</row>
+		<row>nine</row>
+		
+	</col>
+</table>
+
+<table name="quality">
+	<col name="normal">
+		<row>good</row>
+		<row>bad</row>
+		<row>not good</row>
+	</col>
+	<col name="extreme">
+		<row>not bad</row>
+		<row>pretty good</row>
+		<row>Excellent</row>
+		<row>Briliant</row>
+		<row>genious</row>
+		<row>unbelivable</row>
+	</col>
+</table>
+
+<table name="cities">
+	<col name="local">
+		<row>cairo</row>
+		<row>alex.</row>
+		<row>moroco</row>
+        <row>6th octobar</row>
+		<row>new cairo</row>
+	</col>
+	<col name="international">
+		<row>spain</row>
+		<row>itali</row>
+		<row>france</row>
+		<row>germany</row>
+		<row>USA</row>
+		<row>UK</row>
+	</col>
+</table>
+
+<table name="data">
+	<col name="banana">
+		<row>12.5</row>
+		<row>17</row>
+		<row>5</row>
+        <row>2</row>
+		<row>1</row>
+		<row>7</row>
+		<row>8</row>
+	</col>
+	<col name="apple">
+		<row>90</row>
+		<row>25</row>
+		<row>13</row>
+		<row>10</row>
+		<row>99</row>
+		<row>81</row>
+	</col>
+</table>
+</dataBase>
