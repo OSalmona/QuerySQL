@@ -25,8 +25,11 @@ namespace Files_proj
         private void Excute_Btn_Click(object sender, EventArgs e)
         {
             query.OnCreate(Query_Input.Text);
-            Query_Input.Text="";
-            foreach (string s in query.postFixString) Query_Input.Text += s+ " ";
+            if(query.isFunction)
+            {
+                Query_Input.Text = "";
+                foreach (string s in query.postFixString) Query_Input.Text += s + " ";
+            }
 
         }
         void Split()

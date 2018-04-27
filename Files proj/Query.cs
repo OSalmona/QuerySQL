@@ -3,26 +3,61 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Files_proj
 {
     class Query
     {
         //splitted unprocessed query
+        //[0]:the selection parameters 
+        //[1]:the table Name 
+        //[2]:the conditions if existes 
         public string[] intialQuery { get; set; }
         //selected columns
         public List<string> colNames;
         public string tableName;
         public Queue<string> postFixString;
-
+        public bool isFunction;
+        MatchCollection match;
         public void OnCreate(string userInput)
         {
-            intialQuery = userInput.Split(new[] { "from" }, StringSplitOptions.None);
-            colNames = new List<string>(get_columns_name());
-            tableName = get_table_name();
-            postFixString = stack_postfix();
+
+            intialQuery = userInput.Split(new[] {"select","where", "from" }, StringSplitOptions.None);
+            intialQuery = intialQuery.Where(w => w != "").ToArray();
+            selection();
+            setTableName();
+            postfix();
+        }
+        //Specify if the query is selecting a col or a function
+        //and get out the function name and prameter or the col names
+        public void selection()
+        {
+            string re1 = "(max|min|count|avg|Sum).*?"; //function Name max,min,sum
+            string re2 = "\\(.*?(\\*|[a-z][a-z0-9]+).*?\\)";   // Column Name for the function ex: max(colName)
+            string re3 = "([a-z][a-z0-9]*)";//column name Name in the selection ex select colname , colname
+            Regex r = new Regex(re1 + re2, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            match = r.Matches(intialQuery[0]);
+
+            if (match.Count == 0)
+            {
+                isFunction = false;
+                r = new Regex(re3, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                match = r.Matches(intialQuery[0]);
+            }
+            else
+                isFunction = true;
+
         }
 
+        public void setTableName()
+        {
+            string after_from_string = intialQuery[1];
+            string table_name = after_from_string;
+            table_name = table_name.Replace(" ", "");
+
+            tableName=table_name;
+        }
         public string after_where_fn()
         {
             string after_from_string = intialQuery[1];
@@ -32,56 +67,16 @@ namespace Files_proj
             }
             else
             {
+
                 string[] s = after_from_string.ToString().Split(new[] { "where" }, StringSplitOptions.None);
                 after_from_string = s[1];
-
+                after_from_string = after_from_string.Replace(" And ", "&");
+                after_from_string = after_from_string.Replace(" OR ", "||");
                 return after_from_string;
             }
         }
-        public string get_table_name()
-        {
-            string after_from_string = intialQuery[1];
 
-            if (!after_from_string.ToString().Contains("where"))
-            {
-                string table_name = after_from_string;
-                table_name = table_name.Replace(" ", "");
 
-                return table_name;
-            }
-            else
-            {
-                string[] s = after_from_string.Split(new[] { "where" }, StringSplitOptions.None);
-                string table_name = s[0];
-                table_name = table_name.Replace(" ", "");
-
-                return table_name;
-            }
-        }
-        public List<string> get_columns_name()
-        {
-            string[] s_2 = intialQuery[0].Split(',');
-
-            string[] s_3 = s_2[0].ToString().Split(new[] { "select" }, StringSplitOptions.None);
-            string b = s_3[1];
-
-            List<string> columns_name = new List<string>();
-            for (int i = 0; i < s_2.Length; i++)
-            {
-                if (i == 0)
-                {
-                    b = b.ToString().Replace(" ", "");
-                    columns_name.Add(b);
-                }
-                else
-                {
-                    s_2[i] = s_2[i].Replace(" ", "");
-                    columns_name.Add(s_2[i]);
-                }
-            }
-
-            return columns_name;
-        }
 
         public bool Predecessor(string firstOperator, string secondOperator)
         {
@@ -109,7 +104,7 @@ namespace Files_proj
 
         }
 
-        public  Queue<string> stack_postfix()
+        public  void postfix()
         {
             string infix = after_where_fn();
              infix = infix.Replace(" ", "");
@@ -189,7 +184,7 @@ namespace Files_proj
 
             string[] postfix_arr = postfix.ToString().Split(' ');
 
-            return new Queue<string>(postfix_arr);
+            postFixString= new Queue<string>(postfix_arr);
 
         }
 
