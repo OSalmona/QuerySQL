@@ -40,7 +40,7 @@ namespace Files_proj
         {
             string re1 = "(max|min|count|avg|Sum).*?"; //function Name max,min,sum
             string re2 = "\\(.*?(\\*|[a-z][a-z0-9]+).*?\\)";   // Column Name for the function ex: max(colName)
-            string re3 = "([a-z][a-z0-9]*)";//column name Name in the selection ex select colname , colname
+            string re3 = "(\\*|[a-z][a-z0-9]*)";//column name Name in the selection ex select colname , colname
             Regex r = new Regex(re1 + re2, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             match = r.Matches(intialQuery[0]);
 

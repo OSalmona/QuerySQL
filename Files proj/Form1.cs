@@ -46,25 +46,36 @@ namespace Files_proj
         }
         void fillDataGridView()
         {
-            if(query.isFunction)
+
+            List<List<string>> results = op.select();
+
+            ResultGredView.ColumnCount = results.Count;
+
+            int x = 0;
+            for (int i = 0; i < results.Count; i++)
+                if (x < results[i].Count) x = results[i].Count;
+
+            for(int i=0;i<results.Count;i++)
             {
-                List<List<string>> results = op.select();
+                int j = 0;
+                for (j = results[i].Count; j < x; j++) results[i].Add("");
+            }
+            
+            ResultGredView.RowCount = x;
 
-                ResultGredView.ColumnCount = results.Count;
-                ResultGredView.RowCount = results[0].Count;
-
-                for(int i=0;i< results.Count;i++)
+            for (int j = 0; j < x; j++)
+            {
+                for (int i = 0; i < results.Count; i++)
                 {
-                    for(int j=0;j< results[i].Count;j++)
-                    {
-                        ResultGredView.Rows[j].Cells[i].Value = results[i][j];
-                    }
+                    ResultGredView.Rows[j].Cells[i].Value = results[i][j];
                 }
             }
-            else
+            for (int i = 0; i < ResultGredView.ColumnCount; i++)
             {
-                
+                ResultGredView.Columns[i].Name = results[i][0];
             }
+            ResultGredView.Rows.Remove(ResultGredView.Rows[0]);
+
         }
         void Where()
         {

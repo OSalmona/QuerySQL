@@ -14,7 +14,7 @@ namespace Files_proj
         XmlDocument doc;
         string table;
         Query query;
-        public OP(string fileName,Query query)
+        public OP(string fileName, Query query)
         {
             this.query = query;
             this.table = query.intialQuery[1];
@@ -36,11 +36,11 @@ namespace Files_proj
                                                       // Note:[0] for first tage table  
                                                       /* Go through the table tag */
             int tablepos = -1;
-            for(int i=0;i<list.Count;i++)
+            for (int i = 0; i < list.Count; i++)
             {
                 if (list[i].Attributes["name"].Value.ToString() == table) tablepos = i;
             }
-            for (int i = 0; i < list.Count; i++)
+            for (int i = 0; i < list[tablepos].ChildNodes.Count; i++)
             {
                 string col = list[tablepos].ChildNodes[i].Attributes["name"].Value.ToString(); // store value of "name" attribute into col variable
 
@@ -51,6 +51,23 @@ namespace Files_proj
             }
             return null;
         }
+        XmlNodeList getCol()
+        {
+
+            list = doc.GetElementsByTagName("table"); // get elements at tag "table" & store them at list variable
+                                                      // Note:[0] for first tage table  
+                                                      /* Go through the table tag */
+            int tablepos = -1;
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].Attributes["name"].Value.ToString() == table)
+                {
+                    return list[i].ChildNodes;
+                }
+            }
+            return null;
+        }
+
         public double Sum(string attrName)
         {
             double _sum = 0;
@@ -120,9 +137,9 @@ namespace Files_proj
         }
         List<int> selectedRows()
         {
-            List<int> rows=new List<int>();
+            List<int> rows = new List<int>();
             Stack<string> s = new Stack<string>();
-            foreach(string i in query.postFixString)
+            foreach (string i in query.postFixString)
             {
 
             }
@@ -132,56 +149,75 @@ namespace Files_proj
         }
         public List<List<string>> select()
         {
-            List<List<string>> l =new List<List<string>>();
-            if(query.isFunction)
+            List<List<string>> l = new List<List<string>>();
+            if (query.isFunction)
             {
-                string colName,operation;
-                double tmp=0;
-                
+                string colName, operation;
+                double tmp = 0;
+
                 foreach (Match m in query.match)
                 {
                     colName = m.Groups[2].ToString();
                     operation = m.Groups[1].ToString();
                     if (operation == "max")
                     {
-                        tmp =  max(colName) ;
+                        tmp = max(colName);
                     }
                     else if (operation == "min")
                     {
-                        tmp =  min(colName) ;
+                        tmp = min(colName);
                     }
                     else if (operation == "avg")
                     {
-                        tmp =  Avarage(colName) ;
+                        tmp = Avarage(colName);
                     }
                     else if (operation == "count")
                     {
-                        tmp =  count(colName) ;
+                        tmp = count(colName);
                     }
                     else if (operation == "sum")
                     {
-                        tmp =  Sum(colName) ;
+                        tmp = Sum(colName);
                     }
                     l.Add(new List<string>() { colName, tmp.ToString() });
                 }
             }
             else
             {
-                List<string> colNames = new List<string>();
                 if (query.match[0].Groups[0].ToString() == "*")
                 {
+                    XmlNodeList table = getCol();
 
+                    for (int i = 0; i < table.Count; i++)
+                    {
+                        List<string> tmp = new List<string>();
+                        tmp.Add(table[i].Attributes["name"].Value.ToString());
+                        for (int j = 0; j < table[i].ChildNodes.Count; j++)
+                        {
+                            tmp.Add(table[i].ChildNodes[j].InnerText);
+                        }
+                        l.Add(tmp);
+                    }
                 }
                 else
                 {
-                    foreach (Match i in query.match)
+                    foreach (Match m in query.match)
                     {
-                      //  colNames.Add(i.)
+                        List<string> tmp = new List<string>();
+                        tmp.Add(m.Groups[0].ToString());
+                        XmlNodeList table = getCol(tmp[0]);
+                        foreach (XmlNode i in table)
+                        {
+                            tmp.Add(i.InnerText);
+                        }
+                        l.Add(tmp);
                     }
                 }
             }
             return l;
         }
+
+
 
     }
 }
