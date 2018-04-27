@@ -32,6 +32,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.ResultGredView = new System.Windows.Forms.DataGridView();
             this.Excute_Btn = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.ResultGredView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -72,6 +73,10 @@
             this.Excute_Btn.UseVisualStyleBackColor = true;
             this.Excute_Btn.Click += new System.EventHandler(this.Excute_Btn_Click);
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -95,6 +100,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.DataGridView ResultGredView;
         private System.Windows.Forms.Button Excute_Btn;
+        public System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 

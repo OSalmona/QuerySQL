@@ -16,15 +16,20 @@ namespace Files_proj
         public string[] intialQuery { get; set; }
         //selected columns
         public List<string> colNames;
+        public int x;
         public string tableName;
         public Queue<string> postFixString;
         public bool isFunction;
-        MatchCollection match;
+        public MatchCollection match;
         public void OnCreate(string userInput)
         {
 
             intialQuery = userInput.Split(new[] {"select","where", "from" }, StringSplitOptions.None);
             intialQuery = intialQuery.Where(w => w != "").ToArray();
+            string pattern = "\\s+";
+            string replacement = "";
+            Regex rgx = new Regex(pattern);
+            intialQuery[1] = rgx.Replace(intialQuery[1], replacement);
             selection();
             setTableName();
             postfix();
@@ -60,19 +65,18 @@ namespace Files_proj
         }
         public string after_where_fn()
         {
-            string after_from_string = intialQuery[1];
-            if (!after_from_string.ToString().Contains("where"))
+            
+            if (intialQuery.Length<3)
             {
                 return null;
             }
             else
             {
-
-                string[] s = after_from_string.ToString().Split(new[] { "where" }, StringSplitOptions.None);
-                after_from_string = s[1];
+                string after_from_string = intialQuery[2];
                 after_from_string = after_from_string.Replace(" And ", "&");
                 after_from_string = after_from_string.Replace(" OR ", "||");
                 return after_from_string;
+
             }
         }
 
@@ -107,6 +111,7 @@ namespace Files_proj
         public  void postfix()
         {
             string infix = after_where_fn();
+            if (infix == null) return;
              infix = infix.Replace(" ", "");
 
             Stack<string> stack_operator = new Stack<string>();
