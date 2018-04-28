@@ -24,12 +24,23 @@ namespace Files_proj
         public List<int> selectedRows;
         public void OnCreate(string userInput)
         {
-
+            string pattern = "(?i)(select)";
+            string replacement = "select";
+            Regex rgx = new Regex(pattern);
+            userInput = rgx.Replace(userInput, replacement);
+            pattern = "(?i)(where)";
+            replacement = "where";
+            rgx = new Regex(pattern);
+            userInput = rgx.Replace(userInput, replacement);
+            pattern = "(?i)(from)";
+            replacement = "from";
+            rgx = new Regex(pattern);
+            userInput = rgx.Replace(userInput, replacement);
             intialQuery = userInput.Split(new[] {"select","where", "from" }, StringSplitOptions.None);
             intialQuery = intialQuery.Where(w => w != "").ToArray();
-            string pattern = "\\s+";
-            string replacement = "";
-            Regex rgx = new Regex(pattern);
+             pattern = "\\s+";
+             replacement = "";
+            rgx = new Regex(pattern);
             intialQuery[1] = rgx.Replace(intialQuery[1], replacement);
             selection();
             setTableName();
@@ -128,7 +139,7 @@ namespace Files_proj
             {
                 string c = X.ToString();
                 if (cont) { cont = false; continue; }
-                if (char.IsLetterOrDigit(c[0]))
+                if (char.IsLetterOrDigit(c[0])||c[0]=='-')
                 {
                     postfix.Append(c);
                 }

@@ -74,8 +74,16 @@ namespace Files_proj
             XmlNodeList col = getCol(attrName);
             if (col != null)
             {
-                foreach (XmlElement i in col)
-                    _sum += double.Parse(i.InnerText);
+                if(query.intialQuery.Length== 3&&query.selectedRows!=null)
+                {
+                    foreach (int  i in query.selectedRows)
+                        if(getCol(attrName).Count>i) _sum += double.Parse(col[i].InnerText);
+                }
+                else
+                {
+                    foreach (XmlElement i in col)
+                        _sum += double.Parse(i.InnerText);
+                }
             }
             return _sum;
         }
@@ -90,11 +98,22 @@ namespace Files_proj
             XmlNodeList col = getCol(attrName);
             double _min = double.MaxValue;
             double test = 0;
-            foreach (XmlElement i in col)
+            if (query.intialQuery.Length == 3 && query.selectedRows != null)
             {
-                test = double.Parse(i.InnerText);
-                if (test <= _min) _min = test;
-
+                foreach (int i in query.selectedRows)
+                    if (getCol(attrName).Count > i)
+                    {
+                        test = double.Parse(col[i].InnerText);
+                        if (test <= _min) _min = test;
+                    }
+            }
+            else
+            {
+                foreach (XmlElement i in col)
+                {
+                    test = double.Parse(i.InnerText);
+                    if (test <= _min) _min = test;
+                }
             }
 
             return _min;
@@ -104,20 +123,44 @@ namespace Files_proj
             XmlNodeList col = getCol(attrName);
             double _max = double.MinValue;
             double test = 0;
-            foreach (XmlElement i in col)
-            {
-                test = double.Parse(i.InnerText);
-                if (test >= _max) _max = test;
 
+            if (query.intialQuery.Length == 3 && query.selectedRows != null)
+            {
+                foreach (int i in query.selectedRows)
+                    if (getCol(attrName).Count > i)
+                    {
+                        test = double.Parse(col[i].InnerText);
+                        if (test >= _max) _max = test;
+                    }
+            }
+            else
+            {
+                foreach (XmlElement i in col)
+                {
+                    test = double.Parse(i.InnerText);
+                    if (test >= _max) _max = test;
+                }
             }
             return _max;
         }
         double count(string attrName)
         {
             int _count = 0;
-            XmlNodeList col = getCol(attrName);
-            _count = col.Count;
-
+            if (query.intialQuery.Length == 3 && query.selectedRows != null)
+            {
+                foreach (int i in query.selectedRows)
+                    if (getCol(attrName).Count > i)
+                    {
+                        _count ++;
+                    }
+                    else
+                        break;
+            }
+            else
+            {
+                XmlNodeList col = getCol(attrName);
+                _count = col.Count;
+            }
             return _count;
         }
         bool In(string attrName, List<string> l)
@@ -137,8 +180,9 @@ namespace Files_proj
         List<int> selectedRows()
         {
             List<int> rows = new List<int>();
-
-            for (int i = 0; i < ; i++) if (checkColumn(i)) { rows.Add(i); }
+            
+            for (int i = 0; i < 20; i++)
+                if (checkColumn(i)) { rows.Add(i); }
             return rows;
 
         }
@@ -147,38 +191,48 @@ namespace Files_proj
             Stack<string> s = new Stack<string>();
             foreach (string q in query.postFixString)
             {
-                if (q == ">") s.Push((greater(c(s.Pop(), i), c(s.Pop(), i)) ? "F" : "T"));
+                if (q == ">") s.Push((greater(c(s.Pop(), i), c(s.Pop(), i)) ? "T" : "F"));
 
-                else if (q == "<") s.Push((!greater(c(s.Pop(), i), c(s.Pop(), i))?"F":"T"));
+                else if (q == "<") s.Push((smaller(c(s.Pop(), i), c(s.Pop(), i))?"T":"F"));
 
-                else if (q == "=") s.Push((equal(c(s.Pop(), i), c(s.Pop(), i)) ? "F" : "T"));
+                else if (q == "=") s.Push((equal(c(s.Pop(), i), c(s.Pop(), i)) ? "T" : "F"));
 
-                else if (q == "!=") s.Push((!equal(c(s.Pop(), i), c(s.Pop(), i)) ? "F" : "T"));
+                else if (q == "!=") s.Push((notEqual(c(s.Pop(), i), c(s.Pop(), i)) ? "T" : "F"));
 
-                else if (q == "^") s.Push((IN(c(s.Pop(), i), c(s.Pop(), i)) ? "F" : "T"));
+                else if (q == "^") s.Push((IN(c(s.Pop(), i), c(s.Pop(), i)) ? "T" : "F"));
 
-                else if (q == "!^") s.Push((!IN(c(s.Pop(), i), c(s.Pop(), i)) ? "F" : "T"));
+                else if (q == "!^") s.Push((!IN(c(s.Pop(), i), c(s.Pop(), i)) ? "T" : "F"));
 
-                else if (q == "&") s.Push((AND(s.Pop(),s.Pop()) ? "F" : "T"));
+                else if (q == "&") s.Push((AND(s.Pop(),s.Pop()) ? "T" : "F"));
 
-                else if (q == "||") s.Push((AND(s.Pop(), s.Pop()) ? "F" : "T"));
+                else if (q == "||") s.Push((OR(s.Pop(), s.Pop()) ? "T" : "F"));
 
                 else s.Push(c(q,i).ToString());
 
             }
             return ((s.Peek() == "T") ? true : false);
         }
-        bool greater(double a, double b){ return (a== double.NaN || b== double.NaN || a < b) ? false : true; }
-        bool equal(double a, double b){ return (a == b) ? true : false; }
-        bool equal(string a, string b){ return (a == b) ? true : false; }
-        bool IN(double a, double b){ return (a > b) ? true : false; }
+
+        bool greater(double a, double b){ return (a!= double.NaN && b!=double.NaN&&b>a) ? true : false; }
+        bool smaller(double a, double b){ return (a!= double.NaN && b!=double.NaN&&b<a) ? true : false; }
+        bool equal(double a, double b){ return (a != double.NaN && b != double.NaN&& b == a) ? true : false; }
+        bool notEqual(double a, double b){ return (a != double.NaN && b != double.NaN&& b != a) ? true : false; }
+        bool equal(string a, string b){ return (a != null && b != null&& b == a ) ? true : false; }
+        bool IN(double a, double b){ return (a != double.NaN && b != double.NaN && b>a) ? true : false; }//
+        bool IN(string a, string b){ return (a != null && b != null && a == b) ? true : false; }//
         bool AND(string a, string b) { return ((a == "T") ? true : false)&&((b == "T") ? true : false);}
         bool OR(string a, string b) { return ((a == "T") ? true : false)||((b == "T") ? true : false); }
         double c(string d,int i)
         {
             double f;
-            if (!double.TryParse(d, out f)) f = getCellValue(d, i);
-            return double.NaN;
+            if (!double.TryParse(d, out f))
+            {
+                if(getCol(d).Count>i)
+                    f = getCellValue(d, i);
+                else return double.NaN;
+
+            }
+            return f;
         }
         private double getCellValue(string a, int i)
         {
