@@ -45,6 +45,7 @@ namespace Files_proj
              replacement = "";
             rgx = new Regex(pattern);
             intialQuery[1] = rgx.Replace(intialQuery[1], replacement);
+            INPrameters = new List<List<double>>();
             INsperator();
             selection();
             setTableName();
@@ -62,10 +63,12 @@ namespace Files_proj
             while (inmatch.Success)
             {
                 List<double> l = new List<double>();
-                foreach (string s in inmatch.Groups[0].Value.Split(',')) l.Add(double.Parse(s));
+                foreach (string s in inmatch.Groups[0].Value.Split('(',',',')')) 
+                    if(s!=string.Empty)
+                        l.Add(double.Parse(s));
                 INPrameters.Add(l);
 
-                intialQuery[2] = Regex.Replace(intialQuery[2], "\\((.*?)\\)", INPrameters.Count.ToString());
+                intialQuery[2] = Regex.Replace(intialQuery[2], "\\((.*?)\\)", (INPrameters.Count-1).ToString());
                 inmatch = reg.Match(intialQuery[2]);
             }
             
