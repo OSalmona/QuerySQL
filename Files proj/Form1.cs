@@ -15,7 +15,7 @@ namespace Files_proj
 
     public partial class Form1 : Form
     {
-        Query query = new Query();
+        Query query ;
         OP op;
 
 
@@ -85,7 +85,7 @@ namespace Files_proj
         {
             if (e.KeyCode == Keys.Enter)
             {
-
+                query = new Query();
                 query.OnCreate(Query_Input.Text);
                 op = new OP(openFileDialog1.FileName, query);
                 fillDataGridView();
@@ -96,6 +96,7 @@ namespace Files_proj
 
         private void button1_Click(object sender, EventArgs e)
         {
+            query = new Query();
             query.OnCreate(Query_Input.Text);
             op = new OP(openFileDialog1.FileName, query);
             fillDataGridView();

@@ -19,6 +19,7 @@ namespace Files_proj
             this.query = query;
             this.table = query.intialQuery[1];
             getFile(fileName);
+            
 
         }
 
@@ -67,7 +68,6 @@ namespace Files_proj
             }
             return null;
         }
-
         public double Sum(string attrName)
         {
             double _sum = 0;
@@ -79,7 +79,6 @@ namespace Files_proj
             }
             return _sum;
         }
-
         double Avarage(string attrName)
         {
             double _sum = Sum(attrName);
@@ -138,17 +137,59 @@ namespace Files_proj
         List<int> selectedRows()
         {
             List<int> rows = new List<int>();
-            Stack<string> s = new Stack<string>();
-            foreach (string i in query.postFixString)
-            {
 
-            }
-
+            for (int i = 0; i < ; i++) if (checkColumn(i)) { rows.Add(i); }
             return rows;
 
         }
+        bool checkColumn(int i)
+        {
+            Stack<string> s = new Stack<string>();
+            foreach (string q in query.postFixString)
+            {
+                if (q == ">") s.Push((greater(c(s.Pop(), i), c(s.Pop(), i)) ? "F" : "T"));
+
+                else if (q == "<") s.Push((!greater(c(s.Pop(), i), c(s.Pop(), i))?"F":"T"));
+
+                else if (q == "=") s.Push((equal(c(s.Pop(), i), c(s.Pop(), i)) ? "F" : "T"));
+
+                else if (q == "!=") s.Push((!equal(c(s.Pop(), i), c(s.Pop(), i)) ? "F" : "T"));
+
+                else if (q == "^") s.Push((IN(c(s.Pop(), i), c(s.Pop(), i)) ? "F" : "T"));
+
+                else if (q == "!^") s.Push((!IN(c(s.Pop(), i), c(s.Pop(), i)) ? "F" : "T"));
+
+                else if (q == "&") s.Push((AND(s.Pop(),s.Pop()) ? "F" : "T"));
+
+                else if (q == "||") s.Push((AND(s.Pop(), s.Pop()) ? "F" : "T"));
+
+                else s.Push(c(q,i).ToString());
+
+            }
+            return ((s.Peek() == "T") ? true : false);
+        }
+        bool greater(double a, double b){ return (a== double.NaN || b== double.NaN || a < b) ? false : true; }
+        bool equal(double a, double b){ return (a == b) ? true : false; }
+        bool equal(string a, string b){ return (a == b) ? true : false; }
+        bool IN(double a, double b){ return (a > b) ? true : false; }
+        bool AND(string a, string b) { return ((a == "T") ? true : false)&&((b == "T") ? true : false);}
+        bool OR(string a, string b) { return ((a == "T") ? true : false)||((b == "T") ? true : false); }
+        double c(string d,int i)
+        {
+            double f;
+            if (!double.TryParse(d, out f)) f = getCellValue(d, i);
+            return double.NaN;
+        }
+        private double getCellValue(string a, int i)
+        {
+            XmlNodeList l = getCol(a);
+            double d = double.Parse(l[i].InnerText);
+            return d;
+        }
+
         public List<List<string>> select()
         {
+            query.selectedRows=selectedRows();
             List<List<string>> l = new List<List<string>>();
             if (query.isFunction)
             {
@@ -217,7 +258,7 @@ namespace Files_proj
             return l;
         }
 
-
+        
 
     }
 }

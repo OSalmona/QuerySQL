@@ -21,6 +21,7 @@ namespace Files_proj
         public Queue<string> postFixString;
         public bool isFunction;
         public MatchCollection match;
+        public List<int> selectedRows;
         public void OnCreate(string userInput)
         {
 
