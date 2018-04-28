@@ -199,9 +199,9 @@ namespace Files_proj
 
                 else if (q == "!=") s.Push((notEqual(c(s.Pop(), i), c(s.Pop(), i)) ? "T" : "F"));
 
-                else if (q == "^") s.Push((IN(c(s.Pop(), i), c(s.Pop(), i)) ? "T" : "F"));
+                else if (q == "^") s.Push((IN(c(s.Pop(), i), int.Parse((c(s.Pop(), i)).ToString())) ? "T" : "F"));
 
-                else if (q == "!^") s.Push((!IN(c(s.Pop(), i), c(s.Pop(), i)) ? "T" : "F"));
+                else if (q == "!^") s.Push((!IN(c(s.Pop(), i), int.Parse((c(s.Pop(), i)).ToString())) ? "T" : "F"));
 
                 else if (q == "&") s.Push((AND(s.Pop(),s.Pop()) ? "T" : "F"));
 
@@ -218,10 +218,14 @@ namespace Files_proj
         bool equal(double a, double b){ return (a != double.NaN && b != double.NaN&& b == a) ? true : false; }
         bool notEqual(double a, double b){ return (a != double.NaN && b != double.NaN&& b != a) ? true : false; }
         bool equal(string a, string b){ return (a != null && b != null&& b == a ) ? true : false; }
-        bool IN(double a, double b){ return (a != double.NaN && b != double.NaN && b>a) ? true : false; }//
-        bool IN(string a, string b){ return (a != null && b != null && a == b) ? true : false; }//
         bool AND(string a, string b) { return ((a == "T") ? true : false)&&((b == "T") ? true : false);}
         bool OR(string a, string b) { return ((a == "T") ? true : false)||((b == "T") ? true : false); }
+        bool IN(double a, int b)
+        {
+            foreach (double i in query.INPrameters[b])
+            { if (a == i) return true; }
+            return false;
+        }
         double c(string d,int i)
         {
             double f;

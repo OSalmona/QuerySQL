@@ -21,7 +21,9 @@ namespace Files_proj
         public Queue<string> postFixString;
         public bool isFunction;
         public MatchCollection match;
+        public Match inmatch;
         public List<int> selectedRows;
+        public List<List<double>> INPrameters;
         public void OnCreate(string userInput)
         {
             string pattern = "(?i)(select)";
@@ -36,16 +38,44 @@ namespace Files_proj
             replacement = "from";
             rgx = new Regex(pattern);
             userInput = rgx.Replace(userInput, replacement);
+
             intialQuery = userInput.Split(new[] {"select","where", "from" }, StringSplitOptions.None);
             intialQuery = intialQuery.Where(w => w != "").ToArray();
              pattern = "\\s+";
              replacement = "";
             rgx = new Regex(pattern);
             intialQuery[1] = rgx.Replace(intialQuery[1], replacement);
+            INsperator();
             selection();
             setTableName();
             postfix();
         }
+
+        private void INsperator()
+        {
+            //select * from data where banana IN ( 1 , 2 , 3 ) || banana IN ( 1 , 2 , 33 ) (,*?[0-9]+)
+            string pat = "[a-z][a-z0-9]+";
+            string pat2 = "\\s+(in)\\s+\\(.*?";
+            string pat3 = "([0-9][0-9]+).*?\\)";
+            Regex reg = new Regex("\\((.*?)\\)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            inmatch = reg.Match(intialQuery[2]);
+            while (inmatch.Success)
+            {
+                List<double> l = new List<double>();
+                foreach (string s in inmatch.Groups[0].Value.Split(',')) l.Add(double.Parse(s));
+                INPrameters.Add(l);
+
+                intialQuery[2] = Regex.Replace(intialQuery[2], "\\((.*?)\\)", INPrameters.Count.ToString());
+                inmatch = reg.Match(intialQuery[2]);
+            }
+            
+           /* List<int> tmp = new List<int>();
+            for(int i=0;i<inmatch.Count;i++)
+                tmp.Add(inmatch[i].Groups[])*/
+            
+            intialQuery[2] = Regex.Replace(intialQuery[2], "(?i)( in )", " ^ ");
+        }
+
         //Specify if the query is selecting a col or a function
         //and get out the function name and prameter or the col names
         public void selection()
